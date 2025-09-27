@@ -1,0 +1,55 @@
+# Python cache and compiled files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# Packages and builds
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+site/
+site_build/
+docs_build/
+archive.zip
+docs.zip
+
+# Virtual environments
+env/
+venv/
+env3.*
+.env
+*.env
+Pipfile.lock
+
+# Logs
+*.log
+.coverage*
+coverage.xml
+test.db
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+.ipynb_checkpoints
+.cache
+
+# macOS
+.DS_Store
+
+# Docker
+*.pid
+docker-compose.override.yml
+.netlify
+
+# Optional: Alembic migrations (comment out if you want to track them)
+# alembic/versions/
+
+# Vim temporary files
+*~
+.*.sw?
