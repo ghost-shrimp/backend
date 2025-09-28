@@ -7,15 +7,6 @@ class StateBase(BaseModel):
     country_id: Optional[int] = None
 
 
-class StateCreate(StateBase):
-    pass
-
-
-class StateUpdate(BaseModel):
-    name: Optional[str] = None
-    country_id: Optional[int] = None
-
-
 class StateResponse(StateBase):
     id: int
 

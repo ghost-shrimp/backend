@@ -1,42 +1,38 @@
+from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
 from app.models.user import User
-from app.schemas.user import UserCreate, UserUpdate
+from app.core.helper.service import get_all, get_one
+from app.core.error.exceptions import DuplicateFieldError
 
 
 async def get_users(db: AsyncSession):
-    result = await db.execute(select(User))
-    return result.scalars().all()
+    return await get_all(db, User)
 
 
 async def get_user(db: AsyncSession, user_id: str):
-    result = await db.execute(select(User).where(User.id == user_id))
-    return result.scalar_one_or_none()
+    return await get_one(db, User, user_id)
 
 
-async def create_user(db: AsyncSession, user_in: UserCreate):
-    user = User(**user_in.dict())
+async def create_user(db, user_data):
+    result = await db.execute(
+        select(User).where(
+            or_(
+                User.email == user_data.email,
+                User.phone == user_data.phone
+            )
+        )
+    )
+    existing_user = result.scalar_one_or_none()
+    if existing_user:
+        if existing_user.email == user_data.email:
+            raise DuplicateFieldError(
+                field="email", message="Email already exists")
+        if existing_user.phone == user_data.phone:
+            raise DuplicateFieldError(
+                field="phone", message="Phone already exists")
+
+    user = User(**user_data.model_dump())
     db.add(user)
     await db.commit()
     await db.refresh(user)
-    return user
-
-
-async def update_user(db: AsyncSession, user_id: str, user_in: UserUpdate):
-    user = await get_user(db, user_id)
-    if not user:
-        return None
-    for key, value in user_in.dict(exclude_unset=True).items():
-        setattr(user, key, value)
-    await db.commit()
-    await db.refresh(user)
-    return user
-
-
-async def delete_user(db: AsyncSession, user_id: str):
-    user = await get_user(db, user_id)
-    if not user:
-        return None
-    await db.delete(user)
-    await db.commit()
     return user

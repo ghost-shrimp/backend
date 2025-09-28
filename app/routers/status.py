@@ -1,8 +1,9 @@
-from fastapi import APIRouter, status
+from fastapi import APIRouter
+from app.core.helper.response import success
 
 router = APIRouter(tags=["Status"])
 
 
 @router.get("/health")
 async def healthcheck():
-    return {"status": status.HTTP_200_OK}
+    return success("ok")

@@ -7,15 +7,6 @@ class CityBase(BaseModel):
     state_id: Optional[int] = None
 
 
-class CityCreate(CityBase):
-    pass
-
-
-class CityUpdate(BaseModel):
-    name: Optional[str] = None
-    state_id: Optional[int] = None
-
-
 class CityResponse(CityBase):
     id: int
 

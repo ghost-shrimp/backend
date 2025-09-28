@@ -8,12 +8,13 @@ from sqlalchemy.ext.asyncio import AsyncAttrs
 class Rating(Base, AsyncAttrs):
     __tablename__ = "ratings"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     rater_id = Column(String, ForeignKey("users.id"), nullable=False)
     rated_id = Column(String, ForeignKey("users.id"), nullable=False)
     score = Column(Integer, nullable=False)
     comment = Column(Text)
-    created_at = Column(DateTime, default=datetime.now(timezone.utc))
+    created_at = Column(DateTime(timezone=True),
+                        default=datetime.now(timezone.utc))
 
     rater = relationship("User", foreign_keys=[
                          rater_id], back_populates="ratings_given")

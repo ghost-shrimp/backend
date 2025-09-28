@@ -6,7 +6,6 @@ class LocationBase(BaseModel):
     lat: float
     lng: float
     city_id: Optional[int] = None
-    address: Optional[str] = None
 
 
 class LocationCreate(LocationBase):
@@ -17,7 +16,6 @@ class LocationUpdate(BaseModel):
     lat: Optional[float] = None
     lng: Optional[float] = None
     city_id: Optional[int] = None
-    address: Optional[str] = None
 
 
 class LocationResponse(LocationBase):

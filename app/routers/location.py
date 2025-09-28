@@ -2,30 +2,30 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 from app.core.database import get_db
-from app.services import location
+from app.services import location as location_service
 from app.schemas.city import CityResponse
 from app.schemas.country import CountryResponse
 from app.schemas.location import FullLocation
 from app.schemas.state import StateResponse
+from app.core.helper.response import success
+from app.schemas.response import StandardResponse
 
 router = APIRouter(prefix="/location", tags=["Location"])
 
 
-@router.get("/countries", response_model=List[CountryResponse])
+@router.get("/countries", response_model=StandardResponse[List[CountryResponse]])
 async def get_countries(db: AsyncSession = Depends(get_db)):
-    return await location.get_countries(db)
+    countries = await location_service.get_countries(db)
+    return success(countries)
 
 
-@router.get("/states/{country_id}", response_model=List[StateResponse])
+@router.get("/states/{country_id}", response_model=StandardResponse[List[StateResponse]])
 async def get_states(country_id: int, db: AsyncSession = Depends(get_db)):
-    return await location.get_states(db, country_id)
+    states = await location_service.get_states(db, country_id)
+    return success(states)
 
 
-@router.get("/cities/{state_id}", response_model=List[CityResponse])
+@router.get("/cities/{state_id}", response_model=StandardResponse[List[CityResponse]])
 async def get_cities(state_id: int, db: AsyncSession = Depends(get_db)):
-    return await location.get_cities(db, state_id)
-
-
-@router.get("/location/{city_id}", response_model=FullLocation)
-async def get_full_location(city_id: int, db: AsyncSession = Depends(get_db)):
-    return await location.get_full_location(db, city_id)
+    cities = await location_service.get_cities(db, state_id)
+    return success(cities)

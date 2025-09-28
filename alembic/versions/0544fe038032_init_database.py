@@ -1,8 +1,8 @@
 """init database
 
-Revision ID: 7b674c340c6d
+Revision ID: 0544fe038032
 Revises: 
-Create Date: 2025-09-27 03:19:49.850948
+Create Date: 2025-09-27 22:19:24.694251
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision = '7b674c340c6d'
+revision = '0544fe038032'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -24,11 +24,66 @@ def upgrade():
     sa.Column('code', sa.String(), nullable=False),
     sa.Column('currency', sa.String(), nullable=False),
     sa.Column('currency_symbol', sa.String(), nullable=False),
+    sa.Column('phone_code', sa.String(), nullable=False),
+    sa.Column('timezone', sa.String(), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('code'),
     sa.UniqueConstraint('name')
     )
     op.create_index(op.f('ix_countries_id'), 'countries', ['id'], unique=False)
+    op.create_table('users',
+    sa.Column('id', sa.String(), nullable=False),
+    sa.Column('email', sa.String(), nullable=False),
+    sa.Column('phone', sa.String(), nullable=False),
+    sa.Column('name', sa.String(), nullable=False),
+    sa.Column('bio', sa.Text(), nullable=True),
+    sa.Column('created_at', sa.DateTime(timezone=True), nullable=True),
+    sa.Column('updated_at', sa.DateTime(timezone=True), nullable=True),
+    sa.Column('role', sa.Enum('user', 'admin', name='userrole'), nullable=False),
+    sa.Column('skills', postgresql.ARRAY(sa.String()), nullable=True),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('email'),
+    sa.UniqueConstraint('phone')
+    )
+    op.create_index(op.f('ix_users_id'), 'users', ['id'], unique=False)
+    op.create_table('promotions',
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
+    sa.Column('user_id', sa.String(), nullable=False),
+    sa.Column('title', sa.String(), nullable=True),
+    sa.Column('description', sa.Text(), nullable=True),
+    sa.Column('visible', sa.Boolean(), nullable=True),
+    sa.Column('created_at', sa.DateTime(timezone=True), nullable=True),
+    sa.Column('updated_at', sa.DateTime(timezone=True), nullable=True),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_promotions_id'), 'promotions', ['id'], unique=False)
+    op.create_table('ratings',
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
+    sa.Column('rater_id', sa.String(), nullable=False),
+    sa.Column('rated_id', sa.String(), nullable=False),
+    sa.Column('score', sa.Integer(), nullable=False),
+    sa.Column('comment', sa.Text(), nullable=True),
+    sa.Column('created_at', sa.DateTime(timezone=True), nullable=True),
+    sa.ForeignKeyConstraint(['rated_id'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['rater_id'], ['users.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_ratings_id'), 'ratings', ['id'], unique=False)
+    op.create_table('sessions',
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
+    sa.Column('user_id', sa.String(), nullable=False),
+    sa.Column('refresh_token', sa.String(), nullable=False),
+    sa.Column('ip_address', sa.String(), nullable=True),
+    sa.Column('user_agent', sa.String(), nullable=True),
+    sa.Column('created_at', sa.DateTime(timezone=True), nullable=True),
+    sa.Column('expires_at', sa.DateTime(timezone=True), nullable=False),
+    sa.Column('last_active', sa.DateTime(timezone=True), nullable=True),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('refresh_token')
+    )
+    op.create_index(op.f('ix_sessions_id'), 'sessions', ['id'], unique=False)
     op.create_table('states',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('country_id', sa.Integer(), nullable=True),
@@ -37,6 +92,15 @@ def upgrade():
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_states_id'), 'states', ['id'], unique=False)
+    op.create_table('subscriptions',
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
+    sa.Column('user_id', sa.String(), nullable=False),
+    sa.Column('start_date', sa.DateTime(timezone=True), nullable=True),
+    sa.Column('end_date', sa.DateTime(timezone=True), nullable=True),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_subscriptions_id'), 'subscriptions', ['id'], unique=False)
     op.create_table('cities',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('state_id', sa.Integer(), nullable=True),
@@ -46,103 +110,36 @@ def upgrade():
     )
     op.create_index(op.f('ix_cities_id'), 'cities', ['id'], unique=False)
     op.create_table('locations',
-    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('lat', sa.Float(), nullable=False),
     sa.Column('lng', sa.Float(), nullable=False),
     sa.Column('city_id', sa.Integer(), nullable=True),
-    sa.Column('address', sa.String(), nullable=True),
     sa.ForeignKeyConstraint(['city_id'], ['cities.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_locations_id'), 'locations', ['id'], unique=False)
-    op.create_table('users',
-    sa.Column('id', sa.String(), nullable=False),
-    sa.Column('email', sa.String(), nullable=False),
-    sa.Column('phone', sa.String(), nullable=False),
-    sa.Column('password_hash', sa.String(), nullable=False),
-    sa.Column('name', sa.String(), nullable=False),
-    sa.Column('bio', sa.Text(), nullable=True),
-    sa.Column('location_id', sa.Integer(), nullable=True),
-    sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.Column('updated_at', sa.DateTime(), nullable=True),
-    sa.Column('role', sa.Enum('user', 'admin', name='userrole'), nullable=False),
-    sa.Column('skills', postgresql.ARRAY(sa.String()), nullable=True),
-    sa.ForeignKeyConstraint(['location_id'], ['locations.id'], ),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('email'),
-    sa.UniqueConstraint('phone')
-    )
-    op.create_index(op.f('ix_users_id'), 'users', ['id'], unique=False)
-    op.create_table('promotions',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('user_id', sa.String(), nullable=False),
-    sa.Column('title', sa.String(), nullable=True),
-    sa.Column('description', sa.Text(), nullable=True),
-    sa.Column('visible', sa.Boolean(), nullable=True),
-    sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.Column('updated_at', sa.DateTime(), nullable=True),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_index(op.f('ix_promotions_id'), 'promotions', ['id'], unique=False)
-    op.create_table('ratings',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('rater_id', sa.String(), nullable=False),
-    sa.Column('rated_id', sa.String(), nullable=False),
-    sa.Column('score', sa.Integer(), nullable=False),
-    sa.Column('comment', sa.Text(), nullable=True),
-    sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.ForeignKeyConstraint(['rated_id'], ['users.id'], ),
-    sa.ForeignKeyConstraint(['rater_id'], ['users.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_index(op.f('ix_ratings_id'), 'ratings', ['id'], unique=False)
-    op.create_table('sessions',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('user_id', sa.String(), nullable=False),
-    sa.Column('refresh_token', sa.String(), nullable=False),
-    sa.Column('ip_address', sa.String(), nullable=True),
-    sa.Column('user_agent', sa.String(), nullable=True),
-    sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.Column('expires_at', sa.DateTime(), nullable=False),
-    sa.Column('last_active', sa.DateTime(), nullable=True),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('refresh_token')
-    )
-    op.create_index(op.f('ix_sessions_id'), 'sessions', ['id'], unique=False)
-    op.create_table('subscriptions',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('user_id', sa.String(), nullable=False),
-    sa.Column('start_date', sa.DateTime(), nullable=True),
-    sa.Column('end_date', sa.DateTime(), nullable=True),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_index(op.f('ix_subscriptions_id'), 'subscriptions', ['id'], unique=False)
     op.create_table('tasks',
     sa.Column('id', sa.String(), nullable=False),
     sa.Column('title', sa.String(), nullable=False),
     sa.Column('description', sa.Text(), nullable=True),
-    sa.Column('type', sa.Integer(), nullable=True),
     sa.Column('price', sa.Float(), nullable=True),
     sa.Column('negotiable', sa.Boolean(), nullable=True),
     sa.Column('status', sa.Enum('open', 'draft', 'closed', name='taskstatus'), nullable=True),
     sa.Column('location_id', sa.Integer(), nullable=True),
     sa.Column('created_by', sa.String(), nullable=False),
-    sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.Column('updated_at', sa.DateTime(), nullable=True),
+    sa.Column('created_at', sa.DateTime(timezone=True), nullable=True),
+    sa.Column('updated_at', sa.DateTime(timezone=True), nullable=True),
     sa.ForeignKeyConstraint(['created_by'], ['users.id'], ),
     sa.ForeignKeyConstraint(['location_id'], ['locations.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_tasks_id'), 'tasks', ['id'], unique=False)
     op.create_table('applications',
-    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('task_id', sa.String(), nullable=False),
     sa.Column('applicant_id', sa.String(), nullable=False),
     sa.Column('status', sa.Enum('accepted', 'denied', 'waiting', name='applicationstatus'), nullable=True),
-    sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('created_at', sa.DateTime(timezone=True), nullable=True),
     sa.ForeignKeyConstraint(['applicant_id'], ['users.id'], ),
     sa.ForeignKeyConstraint(['task_id'], ['tasks.id'], ),
     sa.PrimaryKeyConstraint('id')
@@ -157,8 +154,14 @@ def downgrade():
     op.drop_table('applications')
     op.drop_index(op.f('ix_tasks_id'), table_name='tasks')
     op.drop_table('tasks')
+    op.drop_index(op.f('ix_locations_id'), table_name='locations')
+    op.drop_table('locations')
+    op.drop_index(op.f('ix_cities_id'), table_name='cities')
+    op.drop_table('cities')
     op.drop_index(op.f('ix_subscriptions_id'), table_name='subscriptions')
     op.drop_table('subscriptions')
+    op.drop_index(op.f('ix_states_id'), table_name='states')
+    op.drop_table('states')
     op.drop_index(op.f('ix_sessions_id'), table_name='sessions')
     op.drop_table('sessions')
     op.drop_index(op.f('ix_ratings_id'), table_name='ratings')
@@ -167,12 +170,6 @@ def downgrade():
     op.drop_table('promotions')
     op.drop_index(op.f('ix_users_id'), table_name='users')
     op.drop_table('users')
-    op.drop_index(op.f('ix_locations_id'), table_name='locations')
-    op.drop_table('locations')
-    op.drop_index(op.f('ix_cities_id'), table_name='cities')
-    op.drop_table('cities')
-    op.drop_index(op.f('ix_states_id'), table_name='states')
-    op.drop_table('states')
     op.drop_index(op.f('ix_countries_id'), table_name='countries')
     op.drop_table('countries')
     # ### end Alembic commands ###

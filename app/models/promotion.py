@@ -8,13 +8,14 @@ from sqlalchemy.ext.asyncio import AsyncAttrs
 class Promotion(Base, AsyncAttrs):
     __tablename__ = "promotions"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     user_id = Column(String, ForeignKey("users.id"), nullable=False)
     title = Column(String)
     description = Column(Text)
     visible = Column(Boolean, default=True)
-    created_at = Column(DateTime, default=datetime.now(timezone.utc))
-    updated_at = Column(DateTime, default=datetime.now(timezone.utc),
+    created_at = Column(DateTime(timezone=True),
+                        default=datetime.now(timezone.utc))
+    updated_at = Column(DateTime(timezone=True), default=datetime.now(timezone.utc),
                         onupdate=datetime.now(timezone.utc))
 
     user = relationship("User", back_populates="promotions")

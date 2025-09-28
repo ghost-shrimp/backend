@@ -1,29 +1,29 @@
 from datetime import datetime, timezone
+import uuid
 from sqlalchemy import Column, Enum, String, Integer, ForeignKey, DateTime, Text
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.asyncio import AsyncAttrs
-from app.enums import UserRole
+from app.core.enums import UserRole
 from app.models.base import Base
 
 
 class User(Base, AsyncAttrs):
     __tablename__ = "users"
 
-    id = Column(String, primary_key=True, index=True)
+    id = Column(String, primary_key=True, index=True,
+                default=lambda: str(uuid.uuid4()))
     email = Column(String, unique=True, nullable=False)
     phone = Column(String, unique=True, nullable=False)
-    password_hash = Column(String, nullable=False)
     name = Column(String, nullable=False)
     bio = Column(Text)
-    location_id = Column(Integer, ForeignKey("locations.id"))
-    created_at = Column(DateTime, default=datetime.now(timezone.utc))
-    updated_at = Column(DateTime, default=datetime.now(timezone.utc),
+    created_at = Column(DateTime(timezone=True),
+                        default=datetime.now(timezone.utc))
+    updated_at = Column(DateTime(timezone=True), default=datetime.now(timezone.utc),
                         onupdate=datetime.now(timezone.utc))
     role = Column(Enum(UserRole), default=UserRole.user, nullable=False)
     skills = Column(ARRAY(String), default=[])
 
-    location = relationship("Location", back_populates="users")
     tasks_created = relationship(
         "Task", back_populates="creator", cascade="all, delete-orphan")
     applications = relationship(

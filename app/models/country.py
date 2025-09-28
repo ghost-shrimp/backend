@@ -12,6 +12,8 @@ class Country(Base, AsyncAttrs):
     code = Column(String, nullable=False, unique=True)
     currency = Column(String, nullable=False)
     currency_symbol = Column(String, nullable=False)
+    phone_code = Column(String, nullable=False)
+    timezone = Column(String, nullable=False)
 
     states = relationship("State", back_populates="country",
                           cascade="all, delete-orphan")

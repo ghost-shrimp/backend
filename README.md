@@ -2,19 +2,12 @@
 
 ## Setup
 
-You can run the backend in **two ways**:
-
-1. **Local FastAPI server + DB Docker container**
-2. **Full Docker setup (Backend + DB in containers)**
-
----
-
 ### Environment Variables
 
 Create a `.env` file in the root directory:
 
 ```env
-POSTGRES_HOST=<localhost|db> # localhost for db-only, db for full docker setup
+POSTGRES_HOST=db
 POSTGRES_USER=<db-user>
 POSTGRES_PASSWORD=<db-password>
 POSTGRES_DB=<db-name>
@@ -43,43 +36,11 @@ make migrate
 make load-data
 ```
 
----
+### API will be available at:
 
-## Local FastAPI + DB Docker Container
-
-
-1. Install Python dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
-2. Start only the database container:
-
-```bash
-make db-only
-```
-
-3. Apply Alembic migrations to set up the database:
-
-```bash
-make migrate
-```
-
-4. Load data:
-
-```bash
-make load-data
-```
-
-5. Run the FastAPI server locally:
-
-```bash
-make dev
-```
+[http://localhost:8000/docs#/](http://localhost:8000/docs#/)
 
 ---
-
 ## Database Migrations 
 
 * Create a new migration:
@@ -101,16 +62,10 @@ make migrate
 | Command                       | Description                                                      |
 | ----------------------------- | ---------------------------------------------------------------- |
 | `make up`                     | Build and start Docker containers (Docker setup).          |
-| `make db-only`                     | Start only the Postgres container for local FastAPI use (local FastAPI + DB container).         |
 | `make stop`                   | Stop all running containers.                                     |
 | `make reset`                  | Stop containers and remove all volumes, images, and data.        |
 | `make migrate`                | Apply Alembic migrations to the DB.               |
-| `make revision m="<message>"`       | Generate a new Alembic migration.                 |
-| `make dev`       | Run local FastAPI server.                 |
+| `make revision m="<message>"`       | Generate a new Alembic migration.                 |     
 
 
----
 
-API will be available at:
-
-[http://localhost:8000/docs#/](http://localhost:8000/docs#/)

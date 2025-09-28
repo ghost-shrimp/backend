@@ -2,13 +2,13 @@
 -- Uses data from https://github.com/dr5hn/countries-states-cities-database
 
 -- Countries
-INSERT INTO countries (id, name, code, currency, currency_symbol) VALUES (23, 'Belize', 'BZ', 'BZD', '$');
-INSERT INTO countries (id, name, code, currency, currency_symbol) VALUES (53, 'Costa Rica', 'CR', 'CRC', '₡');
-INSERT INTO countries (id, name, code, currency, currency_symbol) VALUES (66, 'El Salvador', 'SV', 'USD', '$');
-INSERT INTO countries (id, name, code, currency, currency_symbol) VALUES (90, 'Guatemala', 'GT', 'GTQ', 'Q');
-INSERT INTO countries (id, name, code, currency, currency_symbol) VALUES (97, 'Honduras', 'HN', 'HNL', 'L');
-INSERT INTO countries (id, name, code, currency, currency_symbol) VALUES (159, 'Nicaragua', 'NI', 'NIO', 'C$');
-INSERT INTO countries (id, name, code, currency, currency_symbol) VALUES (170, 'Panama', 'PA', 'PAB', 'B/.');
+INSERT INTO countries (id, name, code, currency, currency_symbol, phone_code, timezone) VALUES (23, 'Belize', 'BZ', 'BZD', '$', '501', 'America/Belize');
+INSERT INTO countries (id, name, code, currency, currency_symbol, phone_code, timezone) VALUES (53, 'Costa Rica', 'CR', 'CRC', '₡', '506', 'America/Costa_Rica');
+INSERT INTO countries (id, name, code, currency, currency_symbol, phone_code, timezone) VALUES (66, 'El Salvador', 'SV', 'USD', '$', '503', 'America/El_Salvador');
+INSERT INTO countries (id, name, code, currency, currency_symbol, phone_code, timezone) VALUES (90, 'Guatemala', 'GT', 'GTQ', 'Q', '502', 'America/Guatemala');
+INSERT INTO countries (id, name, code, currency, currency_symbol, phone_code, timezone) VALUES (97, 'Honduras', 'HN', 'HNL', 'L', '504', 'America/Tegucigalpa');
+INSERT INTO countries (id, name, code, currency, currency_symbol, phone_code, timezone) VALUES (159, 'Nicaragua', 'NI', 'NIO', 'C$', '505', 'America/Managua');
+INSERT INTO countries (id, name, code, currency, currency_symbol, phone_code, timezone) VALUES (170, 'Panama', 'PA', 'PAB', 'B/.', '507', 'America/Panama');
 
 -- States
 INSERT INTO states (id, name, country_id) VALUES (264, 'Belize', 23);

@@ -8,15 +8,17 @@ from sqlalchemy.ext.asyncio import AsyncAttrs
 class Session(Base, AsyncAttrs):
     __tablename__ = "sessions"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     user_id = Column(String, ForeignKey("users.id"), nullable=False)
 
     refresh_token = Column(String, unique=True, nullable=False)
     ip_address = Column(String, nullable=True)
     user_agent = Column(String, nullable=True)
 
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
-    expires_at = Column(DateTime, nullable=False)
-    last_active = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime(timezone=True),
+                        default=lambda: datetime.now(timezone.utc))
+    expires_at = Column(DateTime(timezone=True), nullable=False)
+    last_active = Column(DateTime(timezone=True),
+                         default=lambda: datetime.now(timezone.utc))
 
     user = relationship("User", back_populates="sessions")

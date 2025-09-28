@@ -33,11 +33,4 @@ revision:
 load-data:
 	$(COMPOSE) exec db psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) -f /db/locations.sql
 	
-# Local
-db-only:
-	$(COMPOSE) -f docker-compose.db-only.yml up
-
-dev:
-	uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-
 
