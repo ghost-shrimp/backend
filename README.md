@@ -63,7 +63,7 @@ make migrate
 | ----------------------------- | ---------------------------------------------------------------- |
 | `make up`                     | Build and start Docker containers (Docker setup).          |
 | `make stop`                   | Stop all running containers.                                     |
-| `make reset`                  | Stop containers and remove all volumes, images, and data.        |
+| `make reset`                  | Stop containers and remove all volumes, images, and data. Warning: this will delete everything       |
 | `make migrate`                | Apply Alembic migrations to the DB.               |
 | `make revision m="<message>"`       | Generate a new Alembic migration.                 |     
 

@@ -5,6 +5,7 @@ class TaskStatus(str, Enum):
     open = "open"
     draft = "draft"
     closed = "closed"
+    completed = "completed"
 
 
 class ApplicationStatus(str, Enum):

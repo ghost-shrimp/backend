@@ -1,11 +1,10 @@
 from datetime import datetime, timezone
-from app.models.base import Base
+from app.models.base import BaseModel
 from sqlalchemy import Column,  Integer, ForeignKey, DateTime, String
 from sqlalchemy.orm import relationship
-from sqlalchemy.ext.asyncio import AsyncAttrs
 
 
-class Subscription(Base, AsyncAttrs):
+class Subscription(BaseModel):
     __tablename__ = "subscriptions"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)

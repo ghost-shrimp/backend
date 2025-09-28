@@ -12,5 +12,4 @@ class City(Base, AsyncAttrs):
     name = Column(String, nullable=False)
 
     state = relationship("State", back_populates="cities", lazy="joined")
-    locations = relationship(
-        "Location", back_populates="city", cascade="all, delete-orphan")
+    tasks = relationship("Task", back_populates="city")

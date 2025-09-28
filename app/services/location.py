@@ -1,7 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models import Country, State, City
-from app.schemas.location import FullLocation, LocationCreate
-from app.models.location import Location
+from app.schemas.location import FullLocation
 from app.core.helper.service import get_all, get_one, get_filtered
 
 
@@ -15,14 +14,6 @@ async def get_states(db: AsyncSession, country_id: int):
 
 async def get_cities(db: AsyncSession, state_id: int):
     return await get_filtered(db, City, state_id=state_id)
-
-
-async def create_location(db: AsyncSession, location_data: LocationCreate):
-    location = Location(**location_data.model_dump())
-    db.add(location)
-    await db.commit()
-    await db.refresh(location)
-    return location
 
 
 async def get_full_location(db: AsyncSession, city_id: int):

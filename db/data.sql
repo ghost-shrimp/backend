@@ -1,5 +1,24 @@
--- Central America Countries, States, and Cities
--- Uses data from https://github.com/dr5hn/countries-states-cities-database
+-- Categories --
+
+INSERT INTO categories (name) VALUES
+('cleaning'),
+('delivery'),
+('shopping'),
+('tutoring'),
+('gardening'),
+('moving'),
+('assembly'),
+('plumbing'),
+('electric'),
+('painting'),
+('tech_support'),
+('pet_care'),
+('errands'),
+('driving'),
+('other');
+
+-- Location --
+-- Location data is taken from https://github.com/dr5hn/countries-states-cities-database
 
 -- Countries
 INSERT INTO countries (id, name, code, currency, currency_symbol, phone_code, timezone) VALUES (23, 'Belize', 'BZ', 'BZD', '$', '501', 'America/Belize');

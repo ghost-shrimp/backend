@@ -1,34 +1,33 @@
-from datetime import datetime, timezone
 import uuid
-from sqlalchemy import Column, Enum, String, Integer, ForeignKey, DateTime, Text
+from sqlalchemy import Column, Enum, Float, String, Integer, ForeignKey, Text
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.orm import relationship
-from sqlalchemy.ext.asyncio import AsyncAttrs
 from app.core.enums import UserRole
-from app.models.base import Base
+from app.models.base import BaseModel
 
 
-class User(Base, AsyncAttrs):
+class User(BaseModel):
     __tablename__ = "users"
 
     id = Column(String, primary_key=True, index=True,
                 default=lambda: str(uuid.uuid4()))
+    identification = Column(String, unique=True, nullable=False)
+    city_id = Column(Integer, ForeignKey("cities.id"))
     email = Column(String, unique=True, nullable=False)
     phone = Column(String, unique=True, nullable=False)
     name = Column(String, nullable=False)
     bio = Column(Text)
-    created_at = Column(DateTime(timezone=True),
-                        default=datetime.now(timezone.utc))
-    updated_at = Column(DateTime(timezone=True), default=datetime.now(timezone.utc),
-                        onupdate=datetime.now(timezone.utc))
     role = Column(Enum(UserRole), default=UserRole.user, nullable=False)
-    skills = Column(ARRAY(String), default=[])
+    skills = Column(ARRAY(String), default=list)
+    average_rating = Column(Float, default=0.0)
+    rating_count = Column(Integer, default=0)
 
+    city = relationship("City")
     tasks_created = relationship(
         "Task", back_populates="creator", cascade="all, delete-orphan")
     applications = relationship(
         "Application", back_populates="applicant", cascade="all, delete-orphan")
-    promotions = relationship(
+    promotion = relationship(
         "Promotion", back_populates="user", uselist=False, cascade="all, delete-orphan")
     ratings_given = relationship("Rating", foreign_keys="Rating.rater_id",
                                  back_populates="rater", cascade="all, delete-orphan")

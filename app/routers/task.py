@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 from app.core.database import get_db
-from app.schemas.task import TaskListItemResponse, TaskResponse, TaskCreate
+from app.schemas.task import TaskMinimalResponse, TaskResponse, TaskCreate
 from app.services import task as task_service
 from app.core.helper.response import success
 from app.schemas.response import StandardResponse
@@ -10,7 +10,7 @@ from app.schemas.response import StandardResponse
 router = APIRouter(prefix="/task", tags=["Tasks"])
 
 
-@router.get("/", response_model=StandardResponse[List[TaskListItemResponse]])
+@router.get("/", response_model=StandardResponse[List[TaskMinimalResponse]])
 async def list_tasks(db: AsyncSession = Depends(get_db)):
     tasks = await task_service.get_tasks(db)
     return success(tasks)

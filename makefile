@@ -15,7 +15,7 @@ up:
 	$(COMPOSE) up
 
 stop:
-	$(COMPOSE) down
+	$(COMPOSE) stop
 
 reset:
 	$(COMPOSE) down -v --rmi all --remove-orphans
@@ -31,6 +31,6 @@ revision:
 	fi
 
 load-data:
-	$(COMPOSE) exec db psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) -f /db/locations.sql
+	$(COMPOSE) exec db psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) -f /db/data.sql
 	
 

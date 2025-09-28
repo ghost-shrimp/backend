@@ -1,25 +1,28 @@
 from pydantic import BaseModel, EmailStr, field_validator
-from typing import List
-from datetime import datetime
+from typing import List, Optional
 from app.core.enums import UserRole
+from app.schemas.base import BaseSchema
+from app.schemas.location import FullLocation
 from .types import name_type, description_type, phone_type, skill_type
 
 
-class UserBase(BaseModel):
+class UserResponseBase(BaseSchema):
+    identification: str
     email: EmailStr
-    phone: str
-    name: name_type
-    bio: description_type
-    role: UserRole = UserRole.user
-    skills: List[str] = []
-
-
-class UserCreate(BaseModel):
-    email: str
     phone: phone_type
     name: name_type
     bio: description_type
     role: UserRole = UserRole.user
+
+
+class UserCreate(BaseModel):
+    identification: str
+    email: EmailStr
+    phone: phone_type
+    name: name_type
+    bio: description_type
+    role: UserRole = UserRole.user
+    city_id: int
     skills: skill_type
 
     @field_validator('skills', mode='before')
@@ -34,10 +37,23 @@ class UserCreate(BaseModel):
         return skills
 
 
-class UserInDB(BaseModel):
+class UserResponse(UserResponseBase):
     id: str
-    created_at: datetime
-    updated_at: datetime
+    location: FullLocation
+    skills: List[str] = []
+    average_rating: Optional[float] = 0.0
+    rating_count: Optional[int] = 0
+
+    class Config:
+        from_attributes = True
+
+
+class UserInDB(UserResponseBase):
+    id: str
+    city_id: int
+    skills: List[str] = []
+    average_rating: float
+    rating_count: int
 
     class Config:
         from_attributes = True

@@ -1,11 +1,9 @@
-from datetime import datetime, timezone
-from app.models.base import Base
-from sqlalchemy import Column, String, Integer,  Boolean, ForeignKey, DateTime, Text
+from app.models.base import BaseModel
+from sqlalchemy import Column, String, Integer,  Boolean, ForeignKey, Text
 from sqlalchemy.orm import relationship
-from sqlalchemy.ext.asyncio import AsyncAttrs
 
 
-class Promotion(Base, AsyncAttrs):
+class Promotion(BaseModel):
     __tablename__ = "promotions"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
@@ -13,9 +11,5 @@ class Promotion(Base, AsyncAttrs):
     title = Column(String)
     description = Column(Text)
     visible = Column(Boolean, default=True)
-    created_at = Column(DateTime(timezone=True),
-                        default=datetime.now(timezone.utc))
-    updated_at = Column(DateTime(timezone=True), default=datetime.now(timezone.utc),
-                        onupdate=datetime.now(timezone.utc))
 
-    user = relationship("User", back_populates="promotions")
+    user = relationship("User", back_populates="promotion")

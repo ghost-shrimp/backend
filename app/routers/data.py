@@ -2,15 +2,23 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 from app.core.database import get_db
+from app.services import category as category_service
 from app.services import location as location_service
-from app.schemas.city import CityResponse
-from app.schemas.country import CountryResponse
-from app.schemas.location import FullLocation
-from app.schemas.state import StateResponse
 from app.core.helper.response import success
 from app.schemas.response import StandardResponse
+from app.schemas.category import CategoryInDB
+from app.schemas.city import CityResponse
+from app.schemas.country import CountryResponse
+from app.schemas.state import StateResponse
 
-router = APIRouter(prefix="/location", tags=["Location"])
+
+router = APIRouter(prefix="/data", tags=["Data"])
+
+
+@router.get("/categories", response_model=StandardResponse[List[CategoryInDB]])
+async def list_categories(db: AsyncSession = Depends(get_db)):
+    categories = await category_service.get_categories(db)
+    return success(categories)
 
 
 @router.get("/countries", response_model=StandardResponse[List[CountryResponse]])

@@ -1,11 +1,10 @@
-from datetime import datetime, timezone
-from app.models.base import Base
-from sqlalchemy import Column, Integer, ForeignKey, DateTime, String, Text
+
+from app.models.base import BaseModel
+from sqlalchemy import Column, Integer, ForeignKey, String, Text
 from sqlalchemy.orm import relationship
-from sqlalchemy.ext.asyncio import AsyncAttrs
 
 
-class Rating(Base, AsyncAttrs):
+class Rating(BaseModel):
     __tablename__ = "ratings"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
@@ -13,8 +12,6 @@ class Rating(Base, AsyncAttrs):
     rated_id = Column(String, ForeignKey("users.id"), nullable=False)
     score = Column(Integer, nullable=False)
     comment = Column(Text)
-    created_at = Column(DateTime(timezone=True),
-                        default=datetime.now(timezone.utc))
 
     rater = relationship("User", foreign_keys=[
                          rater_id], back_populates="ratings_given")
