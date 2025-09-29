@@ -1,5 +1,5 @@
 from app.models.base import BaseModel
-from sqlalchemy import Column, Integer, ForeignKey, Enum, String
+from sqlalchemy import Column, Integer, ForeignKey, Enum, String, UniqueConstraint
 from sqlalchemy.orm import relationship
 from app.core.enums import ApplicationStatus
 
@@ -15,3 +15,7 @@ class Application(BaseModel):
 
     task = relationship("Task", back_populates="applicants")
     applicant = relationship("User", back_populates="applications")
+
+    __table_args__ = (
+        UniqueConstraint("task_id", "applicant_id", name="uq_task_applicant"),
+    )

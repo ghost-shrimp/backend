@@ -1,12 +1,13 @@
 from typing import Annotated, List, Optional
-
 from pydantic import Field, StringConstraints
+from app.core.constants import MAX_DESCRIPTION, MAX_NAME, MAX_TITLE
 
 
 phone_type = Annotated[str, StringConstraints(pattern=r"^\d{8,15}$")]
-name_type = Annotated[str, Field(..., max_length=100)]
-title_type = Annotated[str, Field(..., max_length=200)]
-description_type = Annotated[Optional[str], Field(None, max_length=1000)]
+name_type = Annotated[str, Field(..., max_length=MAX_NAME)]
+title_type = Annotated[str, Field(..., max_length=MAX_TITLE)]
+description_type = Annotated[Optional[str],
+                             Field(None, max_length=MAX_DESCRIPTION)]
 price_type = Annotated[float, Field(ge=0)]
 skill_type = Annotated[
     List[str],

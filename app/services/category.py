@@ -4,5 +4,5 @@ from app.schemas.category import CategoryInDB
 from app.core.helper.service import get_all
 
 
-async def get_categories(db: AsyncSession) -> list[CategoryInDB]:
-    return await get_all(db, Category)
+async def get_categories(db: AsyncSession, amount: int | None = None) -> list[CategoryInDB]:
+    return await get_all(db, Category, limit=amount)

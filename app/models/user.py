@@ -4,6 +4,7 @@ from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.orm import relationship
 from app.core.enums import UserRole
 from app.models.base import BaseModel
+from app.core.constants import MAX_DESCRIPTION, MAX_NAME
 
 
 class User(BaseModel):
@@ -15,8 +16,8 @@ class User(BaseModel):
     city_id = Column(Integer, ForeignKey("cities.id"))
     email = Column(String, unique=True, nullable=False)
     phone = Column(String, unique=True, nullable=False)
-    name = Column(String, nullable=False)
-    bio = Column(Text)
+    name = Column(String(MAX_NAME), nullable=False)
+    bio = Column(String(MAX_DESCRIPTION))
     role = Column(Enum(UserRole), default=UserRole.user, nullable=False)
     skills = Column(ARRAY(String), default=list)
     average_rating = Column(Float, default=0.0)

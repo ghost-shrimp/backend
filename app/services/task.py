@@ -1,17 +1,12 @@
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.task import Task
 from app.schemas.task import TaskCreate, TaskInDB, TaskMinimalResponse, TaskResponse
-from app.core.helper.service import get_one
+from app.core.helper.service import get_all, get_one
 from app.services.location import get_full_location
 
 
 async def get_tasks(db: AsyncSession):
-    result = await db.execute(
-        select(Task)
-    )
-    tasks = result.scalars().all()
-
+    tasks = await get_all(db, Task)
     responses = []
     for task in tasks:
         location = await get_full_location(db, task.city_id)

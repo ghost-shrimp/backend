@@ -3,6 +3,7 @@ from sqlalchemy import Column, String, Integer, Float, Boolean, ForeignKey, Enum
 from sqlalchemy.orm import relationship
 from app.core.enums import TaskStatus
 from app.models.base import BaseModel
+from app.core.constants import MAX_DESCRIPTION, MAX_TITLE
 
 
 class Task(BaseModel):
@@ -10,8 +11,8 @@ class Task(BaseModel):
 
     id = Column(String, primary_key=True, index=True,
                 default=lambda: str(uuid.uuid4()))
-    title = Column(String, nullable=False)
-    description = Column(String)
+    title = Column(String(MAX_TITLE), nullable=False)
+    description = Column(String(MAX_DESCRIPTION))
     price = Column(Float, nullable=False)
     negotiable = Column(Boolean, default=True)
     status = Column(Enum(TaskStatus), index=True, default=TaskStatus.open)

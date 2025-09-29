@@ -3,8 +3,31 @@ from sqlalchemy import Sequence, select
 from typing import Any, Type
 
 
-async def get_all(db: AsyncSession, model: Type[Any]):
-    result = await db.execute(select(model))
+from typing import Any, Type, Optional, Dict
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+
+
+async def get_all(
+    db: AsyncSession,
+    model: Type[Any],
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
+    filters: Optional[Dict[str, Any]] = None,
+):
+    query = select(model)
+
+    if filters:
+        for field, value in filters.items():
+            if hasattr(model, field):
+                query = query.where(getattr(model, field) == value)
+
+    if offset:
+        query = query.offset(offset)
+    if limit:
+        query = query.limit(limit)
+
+    result = await db.execute(query)
     return result.scalars().all()
 
 

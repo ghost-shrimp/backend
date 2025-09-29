@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 from app.core.database import get_db
@@ -16,8 +16,8 @@ router = APIRouter(prefix="/data", tags=["Data"])
 
 
 @router.get("/categories", response_model=StandardResponse[List[CategoryInDB]])
-async def list_categories(db: AsyncSession = Depends(get_db)):
-    categories = await category_service.get_categories(db)
+async def list_categories(amount: int | None = Query(default=None, gt=0), db: AsyncSession = Depends(get_db)):
+    categories = await category_service.get_categories(db, amount=amount)
     return success(categories)
 
 
